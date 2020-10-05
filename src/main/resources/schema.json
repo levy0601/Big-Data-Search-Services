@@ -1,0 +1,248 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "required": [
+    "planCostShares",
+    "linkedPlanServices",
+    "_org",
+    "objectId",
+    "objectType",
+    "planType",
+    "creationDate"
+  ],
+  "properties": {
+    "planCostShares": {
+      "id": "#/properties/planCostShares",
+      "type": "object",
+      "title": "The planCostShares schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": {},
+      "required": [
+        "deductible",
+        "_org",
+        "copay",
+        "objectId",
+        "objectType"
+      ],
+      "properties": {
+        "deductible": {
+          "id": "#/properties/planCostShares/properties/deductible",
+          "type": "integer",
+          "title": "The deductible schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": 0
+        },
+        "_org": {
+          "id": "#/properties/planCostShares/properties/_org",
+          "type": "string",
+          "title": "The _org schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": ""
+        },
+        "copay": {
+          "id": "#/properties/planCostShares/properties/copay",
+          "type": "integer",
+          "title": "The copay schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": 0
+        },
+        "objectId": {
+          "id": "#/properties/planCostShares/properties/objectId",
+          "type": "string",
+          "title": "The objectId schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": ""
+        },
+        "objectType": {
+          "id": "#/properties/planCostShares/properties/objectType",
+          "type": "string",
+          "title": "The objectType schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": ""
+        }
+      }
+    },
+    "linkedPlanServices": {
+      "id": "#/properties/linkedPlanServices",
+      "type": "array",
+      "title": "The linkedPlanServices schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": [],
+      "items": {
+        "id": "#/properties/linkedPlanServices/items",
+        "anyOf": [
+          {
+            "id": "#/properties/linkedPlanServices/items/anyOf/0",
+            "type": "object",
+            "title": "The first anyOf schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "required": [
+              "linkedService",
+              "planserviceCostShares",
+              "_org",
+              "objectId",
+              "objectType"
+            ],
+            "properties": {
+              "linkedService": {
+                "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/linkedService",
+                "type": "object",
+                "title": "The linkedService schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": {},
+                "required": [
+                  "_org",
+                  "objectId",
+                  "objectType",
+                  "name"
+                ],
+                "properties": {
+                  "_org": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/linkedService/properties/_org",
+                    "type": "string",
+                    "title": "The _org schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": ""
+                  },
+                  "objectId": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/linkedService/properties/objectId",
+                    "type": "string",
+                    "title": "The objectId schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": ""
+                  },
+                  "objectType": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/linkedService/properties/objectType",
+                    "type": "string",
+                    "title": "The objectType schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": ""
+                  },
+                  "name": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/linkedService/properties/name",
+                    "type": "string",
+                    "title": "The name schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": ""
+                  }
+                }
+              },
+              "planserviceCostShares": {
+                "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/planserviceCostShares",
+                "type": "object",
+                "title": "The planserviceCostShares schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": {},
+                "required": [
+                  "deductible",
+                  "_org",
+                  "copay",
+                  "objectId",
+                  "objectType"
+                ],
+                "properties": {
+                  "deductible": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/planserviceCostShares/properties/deductible",
+                    "type": "integer",
+                    "title": "The deductible schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0
+                  },
+                  "_org": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/planserviceCostShares/properties/_org",
+                    "type": "string",
+                    "title": "The _org schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": ""
+                  },
+                  "copay": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/planserviceCostShares/properties/copay",
+                    "type": "integer",
+                    "title": "The copay schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0
+                  },
+                  "objectId": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/planserviceCostShares/properties/objectId",
+                    "type": "string",
+                    "title": "The objectId schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": ""
+                  },
+                  "objectType": {
+                    "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/planserviceCostShares/properties/objectType",
+                    "type": "string",
+                    "title": "The objectType schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": ""
+                  }
+                }
+              },
+              "_org": {
+                "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/_org",
+                "type": "string",
+                "title": "The _org schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": ""
+              },
+              "objectId": {
+                "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/objectId",
+                "type": "string",
+                "title": "The objectId schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": ""
+              },
+              "objectType": {
+                "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/objectType",
+                "type": "string",
+                "title": "The objectType schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": ""
+              }
+            }
+          }
+        ]
+      }
+    },
+    "_org": {
+      "id": "#/properties/_org",
+      "type": "string",
+      "title": "The _org schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": ""
+    },
+    "objectId": {
+      "id": "#/properties/objectId",
+      "type": "string",
+      "title": "The objectId schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": ""
+    },
+    "objectType": {
+      "id": "#/properties/objectType",
+      "type": "string",
+      "title": "The objectType schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": ""
+    },
+    "planType": {
+      "id": "#/properties/planType",
+      "type": "string",
+      "title": "The planType schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": ""
+    },
+    "creationDate": {
+      "id": "#/properties/creationDate",
+      "type": "string",
+      "title": "The creationDate schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": ""
+    }
+  }
+}
