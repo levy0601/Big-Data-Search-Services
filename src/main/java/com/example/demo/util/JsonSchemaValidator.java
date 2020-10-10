@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 
 @Component
 public class JsonSchemaValidator {
@@ -24,5 +25,16 @@ public class JsonSchemaValidator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getDetailError(ValidationException e){
+        Collection<ValidationException> cause = e.getCausingExceptions();
+        String message = e.getMessage();
+        StringBuilder detail = new StringBuilder();
+        for (ValidationException exception: cause) {
+            detail.append(exception.getMessage()).append(" ");
+        }
+
+        return  "Invalid Json object." + " Detail:" + message + detail;
     }
 }

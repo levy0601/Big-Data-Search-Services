@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.expection.IdExistingException;
 import com.example.demo.expection.ObjectNotFoundException;
 import com.example.demo.util.JsonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,11 @@ public class RedisRepository {
         return template.opsForValue().get(id);
     }
 
-    public String save(String plan){
+    public String save(String plan) throws IdExistingException {
         String id = JsonHelper.getId(plan);
+        if(template.hasKey(id)){
+            throw new IdExistingException("Object with id: " + id + " already existed");
+        }
         template.opsForValue().set(id,plan);
         return id;
     }

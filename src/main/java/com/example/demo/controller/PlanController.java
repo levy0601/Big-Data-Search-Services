@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.expection.IdExistingException;
 import com.example.demo.expection.ObjectNotFoundException;
 import com.example.demo.repository.RedisRepository;
 import com.example.demo.util.JsonSchemaValidator;
@@ -37,12 +38,12 @@ public class PlanController {
             return redisRepository.get(id);
         } catch (ObjectNotFoundException e){
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, e.getReason()
+                    HttpStatus.NOT_FOUND, e.getReason()
             );
         }
     }
 
-    @PutMapping("/plan")
+    @PostMapping("/plan")
     public ResponseEntity<String> put(@RequestBody String plan){
         String id;
         try {
@@ -50,7 +51,11 @@ public class PlanController {
             id = redisRepository.save(plan);
         } catch (ValidationException e) {
             throw new ResponseStatusException(
-                    HttpStatus.PRECONDITION_FAILED, "Invalid Json object"
+                     HttpStatus.PRECONDITION_FAILED, JsonSchemaValidator.getDetailError(e)
+            );
+        } catch (IdExistingException e){
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, e.getReason()
             );
         }
         return ResponseEntity.status(HttpStatus.CREATED).body("plan created, plan id :" + id);
