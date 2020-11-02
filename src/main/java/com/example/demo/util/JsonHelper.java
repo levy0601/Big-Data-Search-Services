@@ -8,4 +8,9 @@ public class JsonHelper {
         JSONObject jsonObject = new JSONObject(jsonString);
         return (String) jsonObject.get("objectId");
     }
+
+    public static String getCondenseJsonString(String jsonString){
+        JSONObject jsonObject = new JSONObject(jsonString);
+        return jsonObject.toString();
+    }
 }

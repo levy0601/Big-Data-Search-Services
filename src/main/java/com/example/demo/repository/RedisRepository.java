@@ -3,6 +3,8 @@ package com.example.demo.repository;
 import com.example.demo.expection.IdExistingException;
 import com.example.demo.expection.ObjectNotFoundException;
 import com.example.demo.util.JsonHelper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -35,7 +37,7 @@ public class RedisRepository {
         if(template.hasKey(id)){
             throw new IdExistingException("Object with id: " + id + " already existed");
         }
-        template.opsForValue().set(id,plan);
+        template.opsForValue().set(id,JsonHelper.getCondenseJsonString(plan));
         return id;
     }
 
