@@ -4,19 +4,16 @@ import com.example.demo.expection.IdExistingException;
 import com.example.demo.expection.ObjectNotFoundException;
 import com.example.demo.repository.RedisRepository;
 import com.example.demo.util.DocumentHelper;
+import com.example.demo.util.EtagGenerator;
 import com.example.demo.util.JsonSchemaValidator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonObject;
 import org.everit.json.schema.ValidationException;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import com.google.gson.Gson;
+import static org.springframework.http.HttpHeaders.IF_NONE_MATCH;
+import static org.springframework.http.HttpHeaders.IF_MATCH;
 
 
 import java.util.*;
@@ -32,6 +29,8 @@ public class PlanController {
 
     private final String OBJECT_TYPE = "plan";
 
+    private Gson gson = new Gson();
+
     @GetMapping("/")
     public String index() {
         return "Greetings from Spring Boot!";
@@ -41,19 +40,24 @@ public class PlanController {
     public ResponseEntity<Map<String,Object>> getAll() {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(redisRepository.getAll());
 
-//        return redisRepository.getAll();
     }
 
     @GetMapping("/plan/{id}")
-    public ResponseEntity<String> get(@PathVariable String id) {
+    public ResponseEntity<String> get(@PathVariable String id,@RequestHeader(IF_NONE_MATCH) Optional<String> etag) {
         try{
+            String documentKey = DocumentHelper.getDocumentKey(id,OBJECT_TYPE);
             if(!isObjectExist(id)){
                 throw new ObjectNotFoundException("Object with id: " + id + " not found in system");
             }
-            String documentKey = DocumentHelper.getDocumentKey(id,OBJECT_TYPE);
             Map<String,Object> jsonObject = getDocument(documentKey);
+
             String jsonString = new Gson().toJson(jsonObject);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(jsonString);
+            //generate etag
+            String redisJsonObjectEtag = EtagGenerator.generateEtag(jsonString);
+            HttpHeaders responseHeader = new HttpHeaders();
+            responseHeader.set(HttpHeaders.ETAG,redisJsonObjectEtag);
+
+            return ResponseEntity.ok().headers(responseHeader).contentType(MediaType.APPLICATION_JSON).body(jsonString);
         } catch (ObjectNotFoundException e){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getReason()
@@ -103,16 +107,31 @@ public class PlanController {
     }
 
     @PutMapping("/plan/{id}")
-    public ResponseEntity<String> put(@PathVariable String id, @RequestBody String plan){
+    public ResponseEntity<String> put(@PathVariable String id, @RequestBody String plan,@RequestHeader(IF_MATCH) Optional<String> etag){
         try {
             Map<String,Object> object = new Gson().fromJson(plan,LinkedHashMap.class);
             String documentKey = DocumentHelper.getDocumentKey(id,OBJECT_TYPE);
+
+            //check if the id is in redis
             if(!isObjectExist(id)){
                 throw new ObjectNotFoundException("Object with id: " + id + " not found in system");
             }
+            //check if the requestBody has the same content in redis
+            if(etag.isPresent()){
+                Map<String,Object> redisJsonObject = getDocument(documentKey);
+                String redisJsonString = gson.toJson(redisJsonObject);
+                String redisJsonObjectEtag = EtagGenerator.generateEtag(redisJsonString);
+                if(!Objects.equals(etag.get(),redisJsonObjectEtag)){
+                    return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("resource has been edited in-between");
+                }
+            }else {
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("missing Etag Header");
+            }
+
             jsonSchemaValidator.validate(plan);
             deleteDocument(documentKey);
             id = UpdateDocument(object);
+            return ResponseEntity.status(HttpStatus.CREATED).body("plan updated, plan id :" + id);
         } catch (ValidationException e) {
             throw new ResponseStatusException(
                     HttpStatus.PRECONDITION_FAILED, JsonSchemaValidator.getDetailError(e)
@@ -122,7 +141,6 @@ public class PlanController {
                     HttpStatus.NOT_FOUND, e.getReason()
             );
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("plan updated, plan id :" + id);
     }
 
     private String UpdateDocument(Map<String,Object> jsonObject) {
@@ -235,11 +253,22 @@ public class PlanController {
     }
 
     @PatchMapping("/plan/{id}")
-    public ResponseEntity<String> patch(@PathVariable String id,@RequestBody String updateObjectString) {
+    public ResponseEntity<String> patch(@PathVariable String id,@RequestBody String updateObjectString,@RequestHeader(IF_MATCH) Optional<String> etag) {
         try {
             String mainObjectDocumentKey = DocumentHelper.getDocumentKey(id,OBJECT_TYPE);
             Map<String,Object> mainObject = getDocument(mainObjectDocumentKey);
             Map<String,Object> updateObject = new Gson().fromJson(updateObjectString,LinkedHashMap.class);
+
+            //check if the requestBody has the same content in redis
+            if(etag.isPresent()){
+                String redisJsonString = gson.toJson(mainObject);
+                String redisJsonObjectEtag = EtagGenerator.generateEtag(redisJsonString);
+                if(!Objects.equals(etag.get(),redisJsonObjectEtag)){
+                    return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("resource has been edited in-between");
+                }
+            }else {
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("missing Etag Header");
+            }
 
             Map<String,Object> result = DocumentHelper.deepMerge(mainObject,updateObject);
             String resultString = new Gson().toJson(result);
