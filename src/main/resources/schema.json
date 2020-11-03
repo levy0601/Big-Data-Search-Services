@@ -31,7 +31,7 @@
       "properties": {
         "deductible": {
           "id": "#/properties/planCostShares/properties/deductible",
-          "type": "integer",
+          "type": "number",
           "title": "The deductible schema",
           "description": "An explanation about the purpose of this instance.",
           "default": 0
@@ -45,7 +45,7 @@
         },
         "copay": {
           "id": "#/properties/planCostShares/properties/copay",
-          "type": "integer",
+          "type": "number",
           "title": "The copay schema",
           "description": "An explanation about the purpose of this instance.",
           "default": 0
@@ -148,7 +148,7 @@
                 "properties": {
                   "deductible": {
                     "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/planserviceCostShares/properties/deductible",
-                    "type": "integer",
+                    "type": "number",
                     "title": "The deductible schema",
                     "description": "An explanation about the purpose of this instance.",
                     "default": 0
@@ -162,7 +162,7 @@
                   },
                   "copay": {
                     "id": "#/properties/linkedPlanServices/items/anyOf/0/properties/planserviceCostShares/properties/copay",
-                    "type": "integer",
+                    "type": "number",
                     "title": "The copay schema",
                     "description": "An explanation about the purpose of this instance.",
                     "default": 0
