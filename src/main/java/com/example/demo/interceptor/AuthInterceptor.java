@@ -19,7 +19,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         if(token != null){
             token = token.replaceFirst("Bearer ","");
         }
-        AuthHelper.verifyToken(token);
+        AuthHelper.verifyGoogleToken(token);
         return true;
     }
 }

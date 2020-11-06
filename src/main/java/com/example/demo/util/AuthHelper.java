@@ -1,5 +1,7 @@
 package com.example.demo.util;
 
+import com.google.api.client.json.webtoken.JsonWebSignature;
+import com.google.auth.oauth2.TokenVerifier;
 import io.jsonwebtoken.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,7 +30,13 @@ public class AuthHelper {
         }
         try {
             Jws<Claims> jws = Jwts.parserBuilder().requireIssuer(issuer)
-                    .setSigningKey(getParsedPublicKey()) // <---- publicKey, not privateKey
+                    //Verify that the ID token is properly signed by the issuer.
+                    .setSigningKey(getParsedPublicKey())// <---- publicKey, not privateKey
+                    //Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
+                    .requireAudience(audience)
+                    //Verify that the value of the aud claim in the ID token is equal to your app's client ID.
+                    .requireIssuer(issuer)
+                    //Verify that the expiry time (exp claim) of the ID token has not passed. -- built in
                     .build()
                     .parseClaimsJws(idToken);
             System.out.println(jws);
@@ -38,6 +46,32 @@ public class AuthHelper {
         }  catch (JwtException ex) {
             System.out.println(ex.getMessage());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        }
+        return true;
+    }
+
+    public static boolean verifyGoogleToken(String token){
+        TokenVerifier tokenVerifier = TokenVerifier.newBuilder().build();
+        try {
+            if(token == null){
+                System.out.println("missing token");
+                throw new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "missing token");
+            }
+
+            JsonWebSignature jsonWebSignature = tokenVerifier.verify(token);
+
+            if (!audience.equals(jsonWebSignature.getPayload().get("aud"))) {
+                System.out.println("invalid audience");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"invalid audience");
+            }
+            if (!issuer.equals(jsonWebSignature.getPayload().get("iss"))) {
+                System.out.println("invalid issuer");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"invalid issuer");
+            }
+        } catch (TokenVerifier.VerificationException e) {
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
         return true;
     }

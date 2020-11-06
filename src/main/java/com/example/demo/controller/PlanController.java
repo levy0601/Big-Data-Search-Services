@@ -31,10 +31,7 @@ public class PlanController {
 
     private Gson gson = new Gson();
 
-    @GetMapping("/")
-    public String index() {
-        return "Greetings from Spring Boot!";
-    }
+
 
     @GetMapping("/plan")
     public ResponseEntity<Map<String, Object>> getAll() {
