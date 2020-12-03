@@ -32,14 +32,13 @@ public class PlanController {
     private Gson gson = new Gson();
 
 
-
-    @GetMapping("/plan")
+    @GetMapping("/plans")
     public ResponseEntity<Map<String, Object>> getAll() {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(redisRepository.getAll());
 
     }
 
-    @GetMapping("/plan/{id}")
+    @GetMapping("/plans/{id}")
     public ResponseEntity<String> get(@PathVariable String id, @RequestHeader(IF_NONE_MATCH) Optional<String> etag) {
         try {
             String documentKey = DocumentHelper.getDocumentKey(id, OBJECT_TYPE);
@@ -102,7 +101,7 @@ public class PlanController {
         return jsonObject;
     }
 
-    @PutMapping("/plan/{id}")
+    @PutMapping("/plans/{id}")
     public ResponseEntity<String> put(@PathVariable String id, @RequestBody String plan, @RequestHeader(IF_MATCH) Optional<String> etag) {
         try {
             Map<String, Object> object = new Gson().fromJson(plan, LinkedHashMap.class);
@@ -179,7 +178,7 @@ public class PlanController {
         return documentKey;
     }
 
-    @PostMapping("/plan")
+    @PostMapping("/plans")
     public ResponseEntity<String> post(@RequestBody String plan) {
         String id;
         try {
@@ -193,11 +192,11 @@ public class PlanController {
             id = createDocument(object);
         } catch (ValidationException e) {
             throw new ResponseStatusException(
-                    HttpStatus.PRECONDITION_FAILED, JsonSchemaValidator.getDetailError(e),e
+                    HttpStatus.PRECONDITION_FAILED, JsonSchemaValidator.getDetailError(e), e
             );
         } catch (IdExistingException e) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, e.getReason(),e
+                    HttpStatus.CONFLICT, e.getReason(), e
             );
         }
         return ResponseEntity.status(HttpStatus.CREATED).body("plan created, plan id :" + id);
@@ -248,7 +247,7 @@ public class PlanController {
         return documentKey;
     }
 
-    @PatchMapping("/plan/{id}")
+    @PatchMapping("/plans/{id}")
     public ResponseEntity<String> patch(@PathVariable String id, @RequestBody String updateObjectString, @RequestHeader(IF_MATCH) Optional<String> etag) {
         try {
             String mainObjectDocumentKey = DocumentHelper.getDocumentKey(id, OBJECT_TYPE);
@@ -289,7 +288,7 @@ public class PlanController {
     }
 
 
-    @DeleteMapping("/plan/{id}")
+    @DeleteMapping("/plans/{id}")
     public Boolean delete(@PathVariable String id) {
         try {
             if (!isObjectExist(id)) {
