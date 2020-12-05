@@ -72,8 +72,8 @@ public class IndexProcessingQueue {
                 }
             } catch (Exception ex) {
                 System.out.println("Error on processing records" + ex.getMessage());
-                events = new ArrayList<>();
             }
+            events = new ArrayList<>();
         }
     }
 

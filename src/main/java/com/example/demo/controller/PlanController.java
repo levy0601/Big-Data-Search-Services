@@ -129,8 +129,10 @@ public class PlanController {
             }
 
             jsonSchemaValidator.validate(plan);
+            Map<String,Object> oldObject = getDocument(documentKey);
             deleteDocument(documentKey);
             id = UpdateDocument(object);
+            indexProcessingQueue.addDocumentIndexEvent(new DocumentIndexEvent(oldObject,true));
             indexProcessingQueue.addDocumentIndexEvent(new DocumentIndexEvent(object,false));
             return ResponseEntity.status(HttpStatus.CREATED).body("plan updated, plan id :" + id);
         } catch (ValidationException e) {
@@ -278,6 +280,7 @@ public class PlanController {
 
             deleteDocument(mainObjectDocumentKey);
             UpdateDocument(result);
+            indexProcessingQueue.addDocumentIndexEvent(new DocumentIndexEvent(mainObject,true));
             indexProcessingQueue.addDocumentIndexEvent(new DocumentIndexEvent(result,false));
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(resultString);
         } catch (ObjectNotFoundException e) {
