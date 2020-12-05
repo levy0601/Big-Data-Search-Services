@@ -8,18 +8,15 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Collections;
+
 @Configuration
 @Component
 class MvcConfig implements WebMvcConfigurer {
 
-    @Autowired
-    AuthInterceptor authInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor)
-               .excludePathPatterns(
-                       "/"
-        ).pathMatcher(new AntPathMatcher());
+        registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/plans/**","/indexer/**");
     }
 }
