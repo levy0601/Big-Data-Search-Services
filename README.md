@@ -1,6 +1,6 @@
-# searchIndex
+# Big data storage and search 
 
-searchIndex is a highly available concurrent backend systems designing for flexible data structure with build in search functionality
+This system is a highly available concurrent backend systems designing for flexible data structure with build in search functionality
 - can handle any structured data in Json
 - support for validation
 - support for Advanced semantics with rest API operations such as update if not changed; conditional read and conditional write, including merge/Patch support, cascaded delete
@@ -28,7 +28,7 @@ searchIndex is a highly available concurrent backend systems designing for flexi
 - Please open the terminal and execute the command below. Make sure you have installed docker-compose in advance.
 
 ```bash
-git clone https://github.com/levy0601/searchIndex.git
+git clone https://github.com/levy0601/Big-Data-Search-Services.git
 cd BulletJournal
 
 docker-compose -f ./docker-compose.yml up -d
