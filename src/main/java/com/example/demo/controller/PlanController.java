@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.expection.IdExistingException;
 import com.example.demo.expection.ObjectNotFoundException;
+import com.example.demo.queue.IndexProcessingQueue;
+import com.example.demo.queue.event.DocumentIndexEvent;
 import com.example.demo.repository.RedisRepository;
 import com.example.demo.util.DocumentHelper;
 import com.example.demo.util.EtagGenerator;
@@ -26,6 +28,9 @@ public class PlanController {
 
     @Autowired
     private RedisRepository redisRepository;
+
+    @Autowired
+    private IndexProcessingQueue indexProcessingQueue;
 
     private final String OBJECT_TYPE = "plan";
 
@@ -126,6 +131,7 @@ public class PlanController {
             jsonSchemaValidator.validate(plan);
             deleteDocument(documentKey);
             id = UpdateDocument(object);
+            indexProcessingQueue.addDocumentIndexEvent(new DocumentIndexEvent(object,false));
             return ResponseEntity.status(HttpStatus.CREATED).body("plan updated, plan id :" + id);
         } catch (ValidationException e) {
             throw new ResponseStatusException(
@@ -181,8 +187,8 @@ public class PlanController {
     @PostMapping("/plans")
     public ResponseEntity<String> post(@RequestBody String plan) {
         String id;
+        Map<String, Object> object = new Gson().fromJson(plan, LinkedHashMap.class);
         try {
-            Map<String, Object> object = new Gson().fromJson(plan, LinkedHashMap.class);
             if (isObjectExist(object)) {
                 String documentId = DocumentHelper.getObjectId(object);
                 String objectType = DocumentHelper.getObjectType(object);
@@ -199,6 +205,7 @@ public class PlanController {
                     HttpStatus.CONFLICT, e.getReason(), e
             );
         }
+        indexProcessingQueue.addDocumentIndexEvent(new DocumentIndexEvent(object,false));
         return ResponseEntity.status(HttpStatus.CREATED).body("plan created, plan id :" + id);
     }
 
@@ -271,6 +278,7 @@ public class PlanController {
 
             deleteDocument(mainObjectDocumentKey);
             UpdateDocument(result);
+            indexProcessingQueue.addDocumentIndexEvent(new DocumentIndexEvent(result,false));
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(resultString);
         } catch (ObjectNotFoundException e) {
             throw new ResponseStatusException(
@@ -295,6 +303,8 @@ public class PlanController {
                 throw new ObjectNotFoundException("Object with id: " + id + " not found in system");
             }
             String documentKey = DocumentHelper.getDocumentKey(id, OBJECT_TYPE);
+            Map<String,Object> object = getDocument(documentKey);
+            indexProcessingQueue.addDocumentIndexEvent(new DocumentIndexEvent(object,true));
             return deleteDocument(documentKey);
         } catch (ObjectNotFoundException e) {
             throw new ResponseStatusException(
