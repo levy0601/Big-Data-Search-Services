@@ -11,11 +11,16 @@ searchIndex is a highly available concurrent backend systems designing for flexi
 
 - [Installation](#installation)
 - [Pre-requisite](#Pre-requisite)
+- [System Architecture](#System-Architecture)
 - [Available API](#Available-API)
 - [Authentication](#Authentication)
 - [Json schema Validation](#Json-schema-Validation)
+- [Data Modeling](#Data-Modeling)
 - [Example Usecase](#Example-Usecase)
-
+- [Elasticsearch](#Elasticsearch)
+- [Authors and acknowledgment](#Authors-and-acknowledgment)
+- [Contributing](#Contributing)
+- [License](#License)
 
 
 ## Installation
@@ -45,9 +50,12 @@ curl -XPUT "http://localhost:9200/plan" -H 'Content-Type: application/json' -d /
 - ElasticSearch 7.6.0+
 - Kibana 7.6.0+
 
+## System Architecture
+![alt text](image/architecture.PNG)
+
 ## Available API
 - All the API available are list on the swagger page 
-
+![alt text](image/api.PNG)
 - Notice that all 
 `/plans` `/indexer`
 API require a `id_token` in the header you get from Google IDP
@@ -94,6 +102,7 @@ API require a `id_token` in the header you get from Google IDP
 
 ## Data Modeling
 
+JSON document ingested through the ReST API are converted into a collection of key/value pairs to be stored in the NoSQL database
  
 ## Example Usecase
 
@@ -190,10 +199,9 @@ Child documents can be returned as the results of a search request.
 }
 ```
 
-## System architecture
 
 ## Authors and acknowledgment
-
+- Hao Liu - Initial work
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
