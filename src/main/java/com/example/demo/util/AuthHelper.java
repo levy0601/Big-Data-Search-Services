@@ -61,10 +61,10 @@ public class AuthHelper {
 
             JsonWebSignature jsonWebSignature = tokenVerifier.verify(token);
 
-            if (!audience.equals(jsonWebSignature.getPayload().get("aud"))) {
-                System.out.println("invalid audience");
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"invalid audience");
-            }
+//            if (!audience.equals(jsonWebSignature.getPayload().get("aud"))) {
+//                System.out.println("invalid audience");
+//                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"invalid audience");
+//            }
             if (!issuer.equals(jsonWebSignature.getPayload().get("iss"))) {
                 System.out.println("invalid issuer");
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"invalid issuer");

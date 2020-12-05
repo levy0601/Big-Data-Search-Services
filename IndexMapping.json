@@ -1,0 +1,22 @@
+{
+  "mappings": {
+    "properties": {
+      "objectId": {
+        "type": "keyword"
+      },
+      "plan_service": {
+        "type": "join",
+        "relations": {
+          "plan": [
+            "planCostShares",
+            "linkedPlanServices"
+          ],
+          "linkedPlanServices": [
+            "linkedService",
+            "planserviceCostShares"
+          ]
+        }
+      }
+    }
+  }
+}
